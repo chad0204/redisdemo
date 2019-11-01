@@ -1,2 +1,2 @@
 # redisdemo
-springboot+redisCluster111
+springboot+redisCluster
