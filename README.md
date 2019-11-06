@@ -1,2 +1,2 @@
 # redisdemo
-springboot+redisCluster
+springboot+redisCluster/sentinel
