@@ -1,9 +1,10 @@
-package com.pc.redisdemo.util;
+package com.pc.redisdemo.redisTemplate;
 
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import java.util.List;
@@ -36,15 +37,44 @@ public class RedisUtil {
      *  使用Springboot自动配置的redis,RedisProperties读取配置文件中的配置,RedisAutoConfiguration配置了bean
      */
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;//这里注入的其实是springboot提供的StringRedisTemplate
-//    @Autowired
-//    private RedisTemplate<Object, Object> redisTemplate1;//Springboot提供是的另一个redisTemplate,已经被自定义的bean替代
+    private StringRedisTemplate redisTemplate;//这里注入的其实是springboot提供的StringRedisTemplate
 
 
-//    @Autowired
-//    private RedisTemplate<String, Object> redisTemplate2;//自定义的redisTemplate
+    private static int shardSize = 200;
 
 
+
+    //================分片====================================
+
+    public Object shardHget(String key, String field) {
+        Object result = null;
+        try {
+            int shard = Math.abs(field.hashCode() % shardSize);
+            StringBuilder keySb = new StringBuilder(key);
+            keySb.append(":").append(shard);
+            result = this.hget(keySb.toString(), field);
+        } catch (Exception var6) {
+            log.error("shard hash set fail, error:", var6);
+        }
+        return result;
+    }
+
+
+    public boolean shardHset(String key, String field, String value) {
+        boolean result = true;
+
+        try {
+            int shard = Math.abs(field.hashCode() % shardSize);
+            StringBuilder keySb = new StringBuilder(key);
+            keySb.append(":").append(shard);
+            this.hset(keySb.toString(), field, value);
+        } catch (Exception var7) {
+            result = false;
+            log.error("shard hash set fail, error:", var7);
+        }
+
+        return result;
+    }
 
 
 

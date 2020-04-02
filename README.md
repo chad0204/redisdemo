@@ -1,2 +1,4 @@
 # redisdemo
 springboot+redisCluster/sentinel
+
+jedis集群和redisTemplate只能保留一个

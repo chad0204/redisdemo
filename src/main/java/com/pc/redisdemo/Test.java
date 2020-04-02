@@ -3,6 +3,7 @@ package com.pc.redisdemo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -14,6 +15,9 @@ public class Test {
     public static void main(String[] args) {
 
         List<Person> list = Arrays.asList(new Person(1L,"aa"),new Person(2L,"bb"),new Person(3L,"cc"));
+
+
+        list = list.stream().filter(x -> x.getId()>2).collect(Collectors.toList());
 
 
         List<Person> tempList = new ArrayList<>();
