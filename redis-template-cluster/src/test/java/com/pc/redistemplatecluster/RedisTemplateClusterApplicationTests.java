@@ -97,20 +97,6 @@ public class RedisTemplateClusterApplicationTests {
 
     }
 
-    @Test
-    public void transaction() {
-        redisTemplate.multi();
 
-        redisTemplate.opsForValue().set("step1","step1");
-        redisTemplate.opsForValue().set("step2","step2");
-        redisTemplate.opsForValue().set("step3","step3");
-
-
-        redisTemplate.exec();
-
-
-
-
-    }
 
 }
