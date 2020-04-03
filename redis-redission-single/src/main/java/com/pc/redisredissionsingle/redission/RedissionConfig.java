@@ -21,30 +21,20 @@ import javax.annotation.PostConstruct;
 @Slf4j
 public class RedissionConfig {
 
-    @Value("${redis.ids.host}")
+    @Value("${spring.redis.host}")
     private String host;
 
-    @Value("${redis.ids.port}")
+    @Value("${spring.redis.port}")
     private Integer port;
 
-    @Value("${redis.ids.password}")
+    @Value("${spring.redis.password}")
     private String password;
 
-    @Value("${redis.ids.index}")
-    private Integer index;
-
-    @Value("${redis.ids.timeout}")
+    @Value("${spring.redis.timeout}")
     private int timeout;
 
-    @Value("${redis.ids.pool.max-total}")
+    @Value("${spring.redis.jedis.pool.max-active}")
     private int maxTotal;
-
-    @Value("${redis.ids.masterAddress}")
-    private String masterAddress;
-    @Value("${redis.ids.slaveAddress}")
-    private String slaveAddress;
-    @Value("${server.env}")
-    private String serverEnv;
 
 
     @PostConstruct
@@ -56,14 +46,7 @@ public class RedissionConfig {
     @Bean
     public RedissonClient getRedisson() {
         Config config = new Config();
-
-        if (!StringUtils.isEmpty(serverEnv) && serverEnv.equals("prod")){
-            config.useMasterSlaveServers().setMasterAddress(masterAddress).setPassword(password)
-                    .addSlaveAddress(slaveAddress);
-        }else {
-            config.useSingleServer().setAddress(masterAddress).setPassword(password);
-        }
-//
+        config.useSingleServer().setAddress(host).setPassword(password).setTimeout(timeout);
         return Redisson.create(config);
     }
 
