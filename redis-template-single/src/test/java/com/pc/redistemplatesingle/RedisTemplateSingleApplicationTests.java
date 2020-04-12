@@ -119,4 +119,24 @@ public class RedisTemplateSingleApplicationTests {
 
     }
 
+
+    @Test
+    public void testIncr() throws InterruptedException {
+
+        Object value = redisTemplate.opsForValue().get("incr");
+
+        if(value!=null && (Integer)value >=1) {
+            System.out.println("锁住了");
+            return;
+        }
+
+        redisTemplate.opsForValue().increment("incr",1);
+        redisTemplate.expire("incr",100,TimeUnit.SECONDS);
+        System.out.println("加锁");
+
+
+
+
+    }
+
 }
