@@ -1,12 +1,13 @@
 package com.pc.redistemplatecluster;
 
+import com.pc.redistemplatecluster.redisTemplate.MessageReceiveOne;
+import com.pc.redistemplatecluster.redisTemplate.MessageReceiveTwo;
 import com.pc.redistemplatecluster.redisTemplate.RedisUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.RedisZSetCommands;
-import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -28,6 +29,12 @@ public class RedisTemplateClusterApplicationTests {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private MessageReceiveOne messageReceiveOne;
+
+    @Autowired
+    private MessageReceiveTwo messageReceiveTwo;
 
 
 
@@ -332,6 +339,17 @@ public class RedisTemplateClusterApplicationTests {
 
 
         System.out.println();
+
+
+
+    }
+
+    @Test
+    public void testSubscribeAndPublish() {
+
+        redisTemplate.convertAndSend("channel1","channel1");
+        redisTemplate.convertAndSend("channel2","channel2");
+        redisTemplate.convertAndSend("channel3","channel3");
 
 
 
