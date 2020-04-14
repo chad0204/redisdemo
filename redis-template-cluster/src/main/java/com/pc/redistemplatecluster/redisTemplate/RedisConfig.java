@@ -64,9 +64,9 @@ public class RedisConfig {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         //订阅多个频道
-        container.addMessageListener(listenerAdapter2,new PatternTopic("channel1"));
+        container.addMessageListener(listenerAdapter1,new PatternTopic("channel1"));
         container.addMessageListener(listenerAdapter2,new PatternTopic("channel2"));
-        container.addMessageListener(listenerAdapter1,new PatternTopic("channel3"));
+        container.addMessageListener(listenerAdapter2,new PatternTopic("channel3"));
 
         //序列化对象（特别注意：发布的时候需要设置序列化；订阅方也需要设置序列化）
         Jackson2JsonRedisSerializer seria = new Jackson2JsonRedisSerializer(Object.class);

@@ -3,6 +3,7 @@ package com.pc.redistemplatecluster;
 import com.pc.redistemplatecluster.redisTemplate.MessageReceiveOne;
 import com.pc.redistemplatecluster.redisTemplate.MessageReceiveTwo;
 import com.pc.redistemplatecluster.redisTemplate.RedisUtil;
+import com.pc.redistemplatecluster.redisTemplate.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -347,7 +348,7 @@ public class RedisTemplateClusterApplicationTests {
     @Test
     public void testSubscribeAndPublish() {
 
-        redisTemplate.convertAndSend("channel1","channel1");
+        redisTemplate.convertAndSend("channel1",new User(1L,"娜美"));
         redisTemplate.convertAndSend("channel2","channel2");
         redisTemplate.convertAndSend("channel3","channel3");
 

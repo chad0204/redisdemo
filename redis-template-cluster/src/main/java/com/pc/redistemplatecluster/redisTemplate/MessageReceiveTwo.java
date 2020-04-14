@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class MessageReceiveTwo {
 
     public void receiveMessage(String message) {
+
         System.out.println("MessageReceiveTwo receive:"+message);
     }
 
