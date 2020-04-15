@@ -303,8 +303,8 @@ public class RedisUtil {
         if (delta < 0) {
             throw new RuntimeException("递减因子必须大于0");
         }
-        //redisTemplate.opsForValue().decrement(key,delta);
-//        redisTemplate.opsForValue().increment(key);
+        //mq.opsForValue().decrement(key,delta);
+//        mq.opsForValue().increment(key);
         return redisTemplate.opsForValue().increment(key, -delta);
     }
 

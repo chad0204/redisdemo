@@ -1,8 +1,9 @@
-package com.pc.redistemplatecluster.redisTemplate;
+package com.pc.redistemplatecluster.mq;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pc.redistemplatecluster.model.User;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Component;
 

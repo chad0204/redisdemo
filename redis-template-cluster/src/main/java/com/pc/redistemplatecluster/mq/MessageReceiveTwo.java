@@ -1,4 +1,4 @@
-package com.pc.redistemplatecluster.redisTemplate;
+package com.pc.redistemplatecluster.mq;
 
 import org.springframework.stereotype.Component;
 

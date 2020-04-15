@@ -1,9 +1,10 @@
 package com.pc.redistemplatecluster;
 
-import com.pc.redistemplatecluster.redisTemplate.MessageReceiveOne;
-import com.pc.redistemplatecluster.redisTemplate.MessageReceiveTwo;
-import com.pc.redistemplatecluster.redisTemplate.RedisUtil;
-import com.pc.redistemplatecluster.redisTemplate.User;
+import com.pc.redistemplatecluster.model.AnswerVoInZset;
+import com.pc.redistemplatecluster.mq.MessageReceiveOne;
+import com.pc.redistemplatecluster.mq.MessageReceiveTwo;
+import com.pc.redistemplatecluster.util.RedisUtil;
+import com.pc.redistemplatecluster.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,44 +74,27 @@ public class RedisTemplateClusterApplicationTests {
     @Test
     public void testCluster() {
         redisUtil.del("ddd");
-        redisUtil.set("ddd","redisTemplate");
+        redisUtil.set("ddd","mq");
         System.out.println();
-    }
-
-
-    @Test
-    public void testLock() throws InterruptedException {
-
-        redisUtil.lock("lock",20);
-
-        TimeUnit.SECONDS.sleep(10);
-
-
-        System.out.println(redisUtil.lock("lock",20));
-
-        System.out.println(redisUtil.release("lock"));
-
-        TimeUnit.SECONDS.sleep(11);
-        System.out.println(redisUtil.lock("lock",20));
     }
 
 
     @Test
     public void testString() {
         //自增
-//        Long value = redisTemplate.opsForValue().increment("increment");
+//        Long value = mq.opsForValue().increment("increment");
 
         //
-//        redisTemplate.opsForValue().increment("delta",2);
+//        mq.opsForValue().increment("delta",2);
 //
-//        redisTemplate.opsForValue().increment("key",2.0);
+//        mq.opsForValue().increment("key",2.0);
 //
-//        redisTemplate.opsForValue().decrement("key",3);
+//        mq.opsForValue().decrement("key",3);
 //
 //
-//        redisTemplate.opsForValue().append("aa","bb");
+//        mq.opsForValue().append("aa","bb");
 //
-//        redisTemplate.opsForValue().get("aa",1,2);
+//        mq.opsForValue().get("aa",1,2);
 
 
         redisTemplate.opsForValue().setIfAbsent("absent","bb",10,TimeUnit.SECONDS);//不存在则set
@@ -142,7 +126,7 @@ public class RedisTemplateClusterApplicationTests {
 //               } catch (InterruptedException e) {
 //                   e.printStackTrace();
 //               }
-//               redisTemplate.opsForList().leftPush("list",i+"");
+//               mq.opsForList().leftPush("list",i+"");
 //           }
 //        }).start();
 ////
@@ -153,7 +137,7 @@ public class RedisTemplateClusterApplicationTests {
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
-//                System.out.println(redisTemplate.opsForList().rightPop("list",500,TimeUnit.MILLISECONDS));
+//                System.out.println(mq.opsForList().rightPop("list",500,TimeUnit.MILLISECONDS));
 //
 //            }
 //        }).start();
@@ -268,14 +252,14 @@ public class RedisTemplateClusterApplicationTests {
         redisTemplate.opsForZSet().add(student3,"路飞",1);
         redisTemplate.opsForZSet().add(student3,"索隆",1);
 
-//        redisTemplate.opsForZSet().intersectAndStore(student1,Arrays.asList(student2,student3),"{student}-sum");//交集，分值相加
-//        Set<ZSetOperations.TypedTuple<String>> sum1 = redisTemplate.opsForZSet().rangeWithScores("{student}-sum",0,-1);
+//        mq.opsForZSet().intersectAndStore(student1,Arrays.asList(student2,student3),"{student}-sum");//交集，分值相加
+//        Set<ZSetOperations.TypedTuple<String>> sum1 = mq.opsForZSet().rangeWithScores("{student}-sum",0,-1);
 
-//        redisTemplate.opsForZSet().intersectAndStore(student1,Arrays.asList(student2,student3),"{student}-max", RedisZSetCommands.Aggregate.MAX);////交集，最大
-//        Set<ZSetOperations.TypedTuple<String>> max = redisTemplate.opsForZSet().rangeWithScores("{student}-max",0,-1);
+//        mq.opsForZSet().intersectAndStore(student1,Arrays.asList(student2,student3),"{student}-max", RedisZSetCommands.Aggregate.MAX);////交集，最大
+//        Set<ZSetOperations.TypedTuple<String>> max = mq.opsForZSet().rangeWithScores("{student}-max",0,-1);
 
-//        redisTemplate.opsForZSet().intersectAndStore(student1,Arrays.asList(student2,student3),"{student}-min", RedisZSetCommands.Aggregate.MIN);////交集，最小
-//        Set<ZSetOperations.TypedTuple<String>> max = redisTemplate.opsForZSet().rangeWithScores("{student}-min",0,-1);
+//        mq.opsForZSet().intersectAndStore(student1,Arrays.asList(student2,student3),"{student}-min", RedisZSetCommands.Aggregate.MIN);////交集，最小
+//        Set<ZSetOperations.TypedTuple<String>> max = mq.opsForZSet().rangeWithScores("{student}-min",0,-1);
 
 
         redisTemplate.opsForZSet()
@@ -356,8 +340,17 @@ public class RedisTemplateClusterApplicationTests {
 
     }
 
+    @Test
+    public void testLock() {
+        long currentTime = System.currentTimeMillis();
+        String expire = String.valueOf(currentTime + 1000);
+
+        Boolean lockFlag =redisTemplate.opsForValue().setIfAbsent("lock",expire);
 
 
+
+
+    }
 
 
 

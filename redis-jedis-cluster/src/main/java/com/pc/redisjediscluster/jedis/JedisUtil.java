@@ -4,7 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.params.SetParams;
+import java.util.Collections;
+import java.util.UUID;
 
 /**
  *
@@ -77,6 +81,29 @@ public class JedisUtil {
         }
 
         return result;
+    }
+
+
+    /**
+     *
+     * @param key
+     * @param value UUID.randomUUID().toString()
+     * @param expire 过期时间
+     * @return
+     */
+    public Boolean lock(String key,String value,int expire) {
+        //set(key, uuid, "NX", "EX", expire)
+        if(!StringUtils.isEmpty(jedisCluster.set(key,value,new SetParams().nx().ex(expire)))){
+            return true;
+        }
+        return false;
+    }
+
+    private static final Long RELEASE_SUCCESS = 1L;
+    public boolean release(String lockKey, String requestId) {
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";//lua
+        Object result = jedisCluster.eval(script, Collections.singletonList(lockKey), Collections.singletonList(requestId));
+        return RELEASE_SUCCESS.equals(result);
     }
 
 

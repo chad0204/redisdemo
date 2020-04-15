@@ -1,8 +1,10 @@
-package com.pc.redistemplatecluster.redisTemplate;
+package com.pc.redistemplatecluster.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pc.redistemplatecluster.mq.MessageReceiveOne;
+import com.pc.redistemplatecluster.mq.MessageReceiveTwo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -60,7 +62,7 @@ public class RedisConfig {
      * @return
      */
     @Bean
-    RedisMessageListenerContainer container2(RedisConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter1, MessageListenerAdapter listenerAdapter2){
+    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter1, MessageListenerAdapter listenerAdapter2){
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         //订阅多个频道
@@ -92,6 +94,9 @@ public class RedisConfig {
         //这个地方 是给messageListenerAdapter 传入一个消息接受的处理器，利用反射的方法调用“MessageReceiveOne ”
         return new MessageListenerAdapter(receiver,"receiveMessage");
     }
+
+
+
 
 
 }

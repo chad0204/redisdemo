@@ -1,4 +1,4 @@
-package com.pc.redistemplatecluster;
+package com.pc.redistemplatecluster.model;
 
 import org.springframework.data.redis.core.ZSetOperations;
 
