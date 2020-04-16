@@ -18,7 +18,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
 
     @Bean(destroyMethod = "shutdown")
     public ExecutorService taskExecutor() {
-        return Executors.newScheduledThreadPool(11);//指定线程池大小
+        return Executors.newScheduledThreadPool(12);//指定线程池大小
     }
 
     @Override

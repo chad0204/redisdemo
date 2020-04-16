@@ -38,9 +38,25 @@ public class Task {
 
     @Scheduled(cron = PUT_TIME)//每隔一分钟放一次商品，让商品的新增速度小于消费速度
     public void putGoods() {
-//        redisUtil.incr("no_lock_goods",3);
+        redisUtil.incr("no_lock_goods",3);
         redisUtil.incr("lock_goods",3);
     }
+
+
+    @Scheduled(cron = "0/5 * * * * ?")
+    public void check() {
+        Object data = redisUtil.get("no_lock_goods");
+        if(data!=null && Integer.valueOf(data.toString())<0) {
+            System.out.println(Thread.currentThread().getName()+" ********no lock error"+Integer.valueOf(data.toString()));
+        }
+        Object data1 = redisUtil.get("lock_goods");
+        if(data1!=null && Integer.valueOf(data1.toString())<0) {
+            System.out.println(Thread.currentThread().getName()+" ********lock error"+Integer.valueOf(data1.toString()));
+        }
+
+    }
+
+
 
 
 
@@ -70,35 +86,35 @@ public class Task {
 //        testTask("handle5");
         testSynchronized("handle5");
     }
-//    @Scheduled(cron = PERIOD_TIME)
-//    public void handle6() {
-////        testTask("handle6");
-//        testNoSynchronized("handle6");
-//    }
-//    @Scheduled(cron = PERIOD_TIME)
-//    public void handle7() {
-////        testTask("handle7");
-//        testNoSynchronized("handle7");
-//    }
-//    @Scheduled(cron = PERIOD_TIME)
-//    public void handle8() {
-////        testTask("handle8");
-//        testNoSynchronized("handle8");
-//    }
-//    @Scheduled(cron = PERIOD_TIME)
-//    public void handle9() {
-////        testTask("handle9");
-//        testNoSynchronized("handle9");
-//    }
-//    @Scheduled(cron = PERIOD_TIME)
-//    public void handle10() {
-////        testTask("handle10");
-//        testNoSynchronized("handle10");
-//    }
+    @Scheduled(cron = PERIOD_TIME)
+    public void handle6() {
+//        testTask("handle6");
+        testNoSynchronized("handle6");
+    }
+    @Scheduled(cron = PERIOD_TIME)
+    public void handle7() {
+//        testTask("handle7");
+        testNoSynchronized("handle7");
+    }
+    @Scheduled(cron = PERIOD_TIME)
+    public void handle8() {
+//        testTask("handle8");
+        testNoSynchronized("handle8");
+    }
+    @Scheduled(cron = PERIOD_TIME)
+    public void handle9() {
+//        testTask("handle9");
+        testNoSynchronized("handle9");
+    }
+    @Scheduled(cron = PERIOD_TIME)
+    public void handle10() {
+//        testTask("handle10");
+        testNoSynchronized("handle10");
+    }
 
 
     /**
-     * 如果是控制定时任务，那么没有必要释放锁。
+     * 如果是控制定时任务只有一个执行，那么没有必要释放锁，同时设置超时时间很短，不需要重试
      * @param uuid
      */
     public void testTask(String uuid) {
@@ -133,7 +149,7 @@ public class Task {
     }
 
     /**
-     * 如果是控制资源的串型访问，比如多台服务器从同时查询redis，mysql中的数据，需要在执行结束后立即释放锁，同时没有获取到锁的也需要自旋重试。
+     * 如果是控制资源的串型访问，比如多台服务器从同时查询redis，mysql中的数据，需要在执行结束后立即释放锁，同时没有获取到锁的客户端也需要自旋重试。
      *
      * data为商品数量，初始为5,开启10个客户端抢购，当商品为0时，则不能减1。
      *
@@ -142,7 +158,6 @@ public class Task {
     public void testSynchronized(String uuid) {
         if(redisUtil.tryLock(REDIS_DISTRIBUTION_LOCK, uuid, 10,10000)) {
             try {
-//                System.out.println(Thread.currentThread().getName()+" succeed lock");
                 Object data = redisUtil.get("lock_goods");
                 try {
                     //随机休眠,放大错误
@@ -151,12 +166,11 @@ public class Task {
                     e.printStackTrace();
                 }
                 if(data!=null && Integer.valueOf(data.toString())>0) {
-                    System.out.println(Thread.currentThread().getName()+" decr 1");
+//                    System.out.println(Thread.currentThread().getName()+" decr 1");
                     redisUtil.decr("lock_goods",1);
                 } else {
-                    System.out.println(Thread.currentThread().getName()+" lock_goods empty");
+//                    System.out.println(Thread.currentThread().getName()+" lock_goods empty");
                 }
-
                 redisUtil.releaseLock(REDIS_DISTRIBUTION_LOCK,uuid);//执行完立即释放锁，让其他客户端执行
             } catch (Exception e) {
                 //应该是执行报错或者超时才会释放
@@ -183,11 +197,12 @@ public class Task {
             e.printStackTrace();
         }
         if(data!=null && Integer.valueOf(data.toString())>0) {
-            System.out.println(Thread.currentThread().getName()+" decr 1");
+//            System.out.println(Thread.currentThread().getName()+" decr 1");
             redisUtil.decr("no_lock_goods",1);
         } else {
-            System.out.println(Thread.currentThread().getName()+" no_lock_goods empty");
+//            System.out.println(Thread.currentThread().getName()+" no_lock_goods empty");
         }
     }
+
 
 }
