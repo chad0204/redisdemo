@@ -88,27 +88,22 @@ public class Task {
     }
     @Scheduled(cron = PERIOD_TIME)
     public void handle6() {
-//        testTask("handle6");
         testNoSynchronized("handle6");
     }
     @Scheduled(cron = PERIOD_TIME)
     public void handle7() {
-//        testTask("handle7");
         testNoSynchronized("handle7");
     }
     @Scheduled(cron = PERIOD_TIME)
     public void handle8() {
-//        testTask("handle8");
         testNoSynchronized("handle8");
     }
     @Scheduled(cron = PERIOD_TIME)
     public void handle9() {
-//        testTask("handle9");
         testNoSynchronized("handle9");
     }
     @Scheduled(cron = PERIOD_TIME)
     public void handle10() {
-//        testTask("handle10");
         testNoSynchronized("handle10");
     }
 

@@ -347,10 +347,9 @@ public class RedisTemplateClusterApplicationTests {
 
         Boolean lockFlag =redisTemplate.opsForValue().setIfAbsent("lock",expire);
 
-
-
-
     }
+
+
 
 
 
