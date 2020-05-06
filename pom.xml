@@ -28,6 +28,8 @@
         <module>redis-redission-single</module>
         <module>redis-template-cluster</module>
         <module>redis-template-single</module>
+        <module>zk-client</module>
+        <module>kafka-client</module>
     </modules>
 
     <dependencies>
