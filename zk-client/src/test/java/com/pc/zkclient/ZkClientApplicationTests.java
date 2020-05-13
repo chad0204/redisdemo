@@ -95,6 +95,10 @@ public class ZkClientApplicationTests {
     }
 
 
+    /**
+     * delete /path
+     * @throws Exception
+     */
     @Test
     public void delNode() throws Exception {
         client.delete().deletingChildrenIfNeeded().forPath("/loader");

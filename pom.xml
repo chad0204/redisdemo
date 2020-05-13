@@ -30,6 +30,7 @@
         <module>redis-template-single</module>
         <module>zk-client</module>
         <module>kafka-client</module>
+        <module>cache-loader</module>
     </modules>
 
     <dependencies>

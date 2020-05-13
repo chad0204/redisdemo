@@ -1,31 +1,20 @@
-package com.pc.zkclient.util;
+package com.pc.cacheloader.util;
 
-import com.pc.zkclient.Test;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.transaction.CuratorTransaction;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.NodeCacheListener;
-import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
 
 /**
  *
  */
-@Slf4j
-@Component
 public class ZkClientTemplate {
 
     @Autowired
     private CuratorFramework client;
-
-    @Autowired
-    private Test test;
 
     /**
      * 创建节点
@@ -35,7 +24,7 @@ public class ZkClientTemplate {
      * @param data       节点数据
      * @return 是否创建成功
      */
-    public boolean createNode(String path, CreateMode createMode, String data) {
+    public boolean crateNode(String path, CreateMode createMode, String data) {
         try {
             client.create().creatingParentsIfNeeded().withMode(createMode).forPath(path, data.getBytes());
         } catch (Exception e) {
@@ -185,60 +174,4 @@ public class ZkClientTemplate {
     public CuratorTransaction startTransaction() {
         return client.inTransaction();
     }
-
-
-
-    //----------------------------------------lock-----------------------------------------//
-
-
-    public boolean lock(String key) {
-        try {
-            client.create()
-                    .creatingParentsIfNeeded()
-                    .withMode(CreateMode.EPHEMERAL).forPath(key, LocalDateTime.now().toString().getBytes());
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean release(String key) {
-        try {
-            client.delete().forPath(key);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-
-
-    public boolean mutexLock(InterProcessMutex mutex,long timeOut,TimeUnit timeUnit) {
-        try {
-            return mutex.acquire(timeOut,timeUnit);
-        } catch (Exception e) {
-            return false;
-        }
-
-    }
-
-
-
-    public void mutexRelease(InterProcessMutex mutex) {
-
-        try {
-            mutex.release();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-
-
-
-
-
-
 }

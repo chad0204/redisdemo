@@ -1,0 +1,64 @@
+server:
+  port: 8888
+
+zk:
+  host: 47.98.213.18:2181
+  force:
+    update: true
+
+
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.pc.cacheloader.model.entity
+
+
+loader:
+  schedule:
+    rise: 10000
+    normal: 0 0 3 * * ?
+
+es:
+  host: localhost
+  port: 9200
+  cluster:
+  xpack: elastic:DtDream01
+
+kafka:
+  servers: localhost:9092
+  groupId: dtp-data-loader
+  autoOffsetReset: latest
+  concurrency: 1
+
+redis:
+  host: 47.98.213.18
+  port: 6379
+  password:
+  database: 3
+  timeout: 2000
+  max-pool: 100
+
+core:
+  integration:
+    notify:
+      topic: CACHE_S_NOTIFY_TOPIC.*
+  retry:
+    notify:
+      topic: CACHE_RETRY_TOPIC
+  publish:
+    notify:
+      topic: CACHE_N_NOTIFY_TOPIC_.*
+
+counter:
+  enable: true
+  cron: 0 0/2 * * * ?
+
+log:
+  debug: false
+
