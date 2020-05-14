@@ -3,13 +3,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.pc.cacheloader.mapper.UserMapper">
 
-    <resultMap id="userMap" type="com.pc.cacheloader.model.entity.UserEntity">
+    <resultMap id="userMap" type="com.pc.cacheloader.model.UserEntity">
         <result column="id"  property="id"/>
         <result column="user_name"  property="userName"/>
     </resultMap>
+    <update id="updateById">
+
+    </update>
 
 
-    <select id="getUser" parameterType="com.pc.cacheloader.model.entity.UserEntity" resultMap="userMap">
+    <select id="getUser" parameterType="com.pc.cacheloader.model.UserEntity" resultMap="userMap">
          SELECT id,user_name
          FROM t_user
          WHERE 1=1

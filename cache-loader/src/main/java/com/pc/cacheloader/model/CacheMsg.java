@@ -74,7 +74,7 @@ public class CacheMsg implements Serializable {
     }
 
     public static enum MsgType {
-        USER(QueryEntity.USER.getaClass()),//数据
+        USER(QueryEntity.USER.getaClass()),//用户信息，后面可能还有其他数据类型，商品，订单等
         ;
 
         private Class aClass;

@@ -110,7 +110,7 @@ public class KafkaService {
     }
 
     /**
-     * 将外部任务转换为loader的内部队列，同步
+     * 将外部任务转换为loader的内部队列，异步
      *
      * @param cacheMsg
      */
@@ -124,7 +124,7 @@ public class KafkaService {
     }
 
     /**
-     * 将外部任务转换为loader的内部队列，异步
+     * 消息重试，同步
      *
      * @param cacheMsg
      */
@@ -136,7 +136,7 @@ public class KafkaService {
         DepositTask depositTask = JSON.parseObject(cacheMsg.getValue(), DepositTask.class);
         AbstractLoader abstractLoader = (AbstractLoader) applicationContext.getBean(depositTask.getLoader());
         CacheTask cacheTask = deposit(depositTask, abstractLoader);
-        TVMsg tvMsg = new TVMsg(SinkModel.LOAD, cacheTask, true);//同步重试
+        TVMsg tvMsg = new TVMsg(SinkModel.LOAD, cacheTask, true);//同步重试，
         abstractLoader.consumerMsg(tvMsg);
     }
 

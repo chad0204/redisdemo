@@ -14,6 +14,8 @@ public interface UserMapper extends BaseMapper {
 
     UserEntity getUser(@Param("id") Long id,@Param("userName") String userName);
 
+    int updateById(UserEntity userEntity);
+
 //    List<UserEntity> getUsers(@Param("id") Long id, @Param("userName") String userName);
 
 }

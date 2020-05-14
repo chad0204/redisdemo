@@ -27,7 +27,7 @@ import java.util.Map;
 @Slf4j
 public abstract class AbstractLoader<T extends BaseDO> implements LoaderInitialize {
     //按照操作类型分类的handler链
-    protected Map<ActionType, NodeHandlerChain<T>> map;
+    protected Map<ActionType, NodeHandlerChain<T>> map;//每个handlerChain中包含redisHandler，esHandler..
 
 
     public NodeHandlerChain<T> nodeIncreaseHandles;
@@ -144,6 +144,7 @@ public abstract class AbstractLoader<T extends BaseDO> implements LoaderInitiali
 
     public Class supportType() {
         if (aClass == null) {
+            //获取loader泛型类型，也就是数据
             Type tp = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
             aClass = (Class<T>) tp;
             return aClass;

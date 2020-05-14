@@ -57,6 +57,13 @@ public abstract class SimpleTemplateLoader<T extends BaseDO> extends AbstractLoa
 
                 if (msg.getT() instanceof CacheTask) {
                     cacheTask = (CacheTask) msg.getT();
+                    cacheTask.setCallBack((Function<Boolean, Object>) result -> {
+                        if (result == true) {
+                            atomicInteger.incrementAndGet();
+                        }
+                        countDownLatch.countDown();
+                        return null;
+                    });
                 } else if (msg.getSinkModel().equals(SinkModel.CREATE)) {
                     cacheTask = gmtCacheTask(atomicInteger, countDownLatch, (T) msg.getT(), ActionType.INCREASE,
                             this);

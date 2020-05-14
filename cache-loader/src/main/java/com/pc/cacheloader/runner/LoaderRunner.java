@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -71,6 +72,8 @@ public class LoaderRunner implements CommandLineRunner, ApplicationContextAware 
     @Value("${log.debug}")
     private Boolean logDebug = false;
 
+    public static AtomicLong crt = new AtomicLong(0);
+
     @Resource
     @Qualifier("asyncChannelProcess")
     private AsyncChannelProcess<TVMsg> asyncChannelProcess;
@@ -104,7 +107,8 @@ public class LoaderRunner implements CommandLineRunner, ApplicationContextAware 
             return;
         }
         for (AbstractLoader abstractLoader : loaders) {
-            if (abstractLoader.supportType().isInstance(msg.getT())) {//根据类型找到外部队列中的任务对应的loader
+            //根据loader泛型类型找到外部队列中的任务对应的loader
+            if (abstractLoader.supportType().isInstance(msg.getT())) {
                 abstractLoader.consumerMsg(msg);
                 return;
             }

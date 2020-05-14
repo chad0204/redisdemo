@@ -58,21 +58,8 @@ public abstract class EsCacheHandler<T extends BaseDO> implements Level2Cache<T>
     }
 
     public boolean updateIndex(String indexName, String type, String json, String id) {
-        boolean flag = false;
-        try {
-            UpdateRequest uRequest = new UpdateRequest();
-            uRequest.index(indexName);
-            uRequest.type(type);
-            uRequest.id(id);
-            uRequest.doc(json);
-            client.update(uRequest).get();
-            flag = true;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return flag;
+        System.out.println("es updateIndex");
+        return true;
     }
 
     //判断符合条件的索引是否存在

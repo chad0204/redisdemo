@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NodeHandlerCacheProxy<T extends BaseDO> extends NodeHandler implements Cache<T> {
 
-    private Cache<T> cache;
+    private Cache<T> cache;//handler
 
 
     public NodeHandlerCacheProxy(Cache<T> cache) {
@@ -22,28 +22,71 @@ public class NodeHandlerCacheProxy<T extends BaseDO> extends NodeHandler impleme
 
 
     @Override
-    public Boolean invalidData(CacheTask<T> task) {
-        return null;
+    public Boolean invalidData(CacheTask<T> cacheTask) {
+        if (!inCurrentNode(cacheTask)) {
+            return ((NodeHandlerCacheProxy) (this.getNext())).invalidData(cacheTask);
+        }
+
+        cache.invalidData(cacheTask);
+        cacheTask.setExecuteStep(cacheTask.getExecuteStep() << 1);
+        if (this.getNext() != null) {
+            return ((NodeHandlerCacheProxy) (this.getNext())).invalidData(cacheTask);
+        }
+        return true;
     }
 
     @Override
     public void clearData() {
-
+        log.debug("cache {} clear cache", this.cache);
+        cache.clearData();
+        if (this.getNext() != null) {
+            ((NodeHandlerCacheProxy) (this.getNext())).clearData();
+        }
     }
 
     @Override
-    public Boolean increaseData(CacheTask<T> task) {
-        return null;
+    public Boolean increaseData(CacheTask<T> cacheTask) {
+        if (!inCurrentNode(cacheTask)) {
+            return ((NodeHandlerCacheProxy) (this.getNext())).increaseData(cacheTask);
+        }
+
+        cache.increaseData(cacheTask);
+        cacheTask.setExecuteStep(cacheTask.getExecuteStep() << 1);
+        if (this.getNext() != null) {
+            return ((NodeHandlerCacheProxy) (this.getNext())).increaseData(cacheTask);
+        }
+        return true;
     }
 
     @Override
-    public Boolean modifyData(CacheTask<T> task) {
-        return null;
+    public Boolean modifyData(CacheTask<T> cacheTask) {
+        if (!inCurrentNode(cacheTask)) {
+            return ((NodeHandlerCacheProxy) (this.getNext())).modifyData(cacheTask);
+        }
+        cache.modifyData(cacheTask);
+        cacheTask.setExecuteStep(cacheTask.getExecuteStep() << 1);
+        if (this.getNext() != null) {
+            return ((NodeHandlerCacheProxy) (this.getNext())).modifyData(cacheTask);
+        }
+        return true;
     }
 
     @Override
-    public Boolean loadData(CacheTask<T> task) {
-        return null;
+    public Boolean loadData(CacheTask<T> cacheTask) {
+        if (!inCurrentNode(cacheTask)) {
+            return ((NodeHandlerCacheProxy) (this.getNext())).loadData(cacheTask);
+        }
+        if (cacheTask.getHistory() != null) {
+            cache.modifyData(cacheTask);
+        } else {
+            cache.increaseData(cacheTask);
+        }
+        cacheTask.setExecuteStep(cacheTask.getExecuteStep() << 1);//*2
+        if (this.getNext() != null) {
+            return ((NodeHandlerCacheProxy) (this.getNext())).loadData(cacheTask);
+        }
+
+        return true;
     }
 
 
