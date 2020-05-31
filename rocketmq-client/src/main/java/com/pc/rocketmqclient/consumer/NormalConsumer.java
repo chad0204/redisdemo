@@ -20,6 +20,7 @@ import java.util.List;
  * 3.一个jvm下，同一个group启动多个消费者需要给每个消费者加实例名称。
  * 4.广播==不同group的集群
  * 5.三种条件下，即使设置了从最后的offset消费，也会变成从0消费。
+ * 6.接收的都是List<MessageExt>，如果不是批量发送，那么get(0)即可
  *
  * @author pengchao
  * @date 10:51 2020-05-30
@@ -72,6 +73,7 @@ public class NormalConsumer implements InitializingBean {
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                //不管是批量发送还是单个消息，都会转成list,所以这里get(0)即可
                 MessageExt msg = msgs.get(0);
                 try {
                     String body = new String(msg.getBody());

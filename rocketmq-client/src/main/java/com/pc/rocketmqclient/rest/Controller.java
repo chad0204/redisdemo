@@ -5,6 +5,7 @@ import com.pc.rocketmqclient.model.Order;
 import com.pc.rocketmqclient.producer.Producer;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,13 +56,25 @@ public class Controller {
     }
 
     @RequestMapping("/send/safe")
-    public Object sendSafe() {
+    public Object sendSafe(Integer times) {
+        if(times==null) {
+            times = 100;
+        }
         try {
-            for(int i=0; i< 100; i++) {
+//            for(int i=0; i< times; i++) {
                 SendResult result = producer
-                        .sendSafe(MQConstants.SAFE_TOPIC,MQConstants.SAFE_TAG,i+"");
+                        .sendSafe(MQConstants.SAFE_TOPIC,MQConstants.SAFE_TAG,"aaa");
 //                System.out.println(result.getMessageQueue().getQueueId() + "===" + i);
-            }
+
+                //SEND_OK,
+                //FLUSH_DISK_TIMEOUT,
+                //FLUSH_SLAVE_TIMEOUT,
+                //SLAVE_NOT_AVAILABLE,
+                if(result.getSendStatus()!= SendStatus.SEND_OK) {
+                    System.out.println(result);
+                }
+
+//            }
         } catch (InterruptedException | RemotingException | MQClientException e) {
             e.printStackTrace();
         }

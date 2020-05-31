@@ -63,14 +63,9 @@ public class OrderlyConsumer implements InitializingBean {
             @Override
             public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext context) {
                 try {
-                    //不管是批量发送还是单个消息，都会转成list,所以这里get(0)即可
-//                    for (MessageExt messageExt: msgs) {
                     MessageExt messageExt = msgs.get(0);
                         String body = new String(messageExt.getBody());
                         System.out.println(consumerName+":topic:" + messageExt.getTopic() + " ,msgId:" + messageExt.getMsgId() + " ,mgsBody:" + body);
-//                    }
-
-
                     return ConsumeOrderlyStatus.SUCCESS;
                 } catch (Exception e) {
                     logger.error("Consumer rocketmq error", e);

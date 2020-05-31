@@ -58,20 +58,25 @@ public class SafeConsumer implements InitializingBean {
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
-                MessageExt msg = msgs.get(0);
-
-//                int times = msg.getReconsumeTimes();
-//                System.out.println("重试次数："+times);
-
                 try {
+
+                    MessageExt msg = msgs.get(0);
+
+                    int times = msg.getReconsumeTimes();
+                    System.out.println("retry time:"+times);
+                    if(times<3) {
+                        int i=5/0;
+                    }
+
                     String body = new String(msg.getBody());
 
                     System.out.println(consumerName+":topic:" + msg.getTopic() + " ,msgId:" + msg.getMsgId() + " ,mgsBody:" + body);
 
                     return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                 } catch (Exception e) {
+                    //进行重试
                     logger.error("Consumer rocketmq error", e);
-                    return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+                    return ConsumeConcurrentlyStatus.RECONSUME_LATER;//broker会重试，超过默认16次，每次重试间隔时间都会延长，会进入死信队列
                 }
             }
         });
