@@ -64,6 +64,27 @@ public class Producer {
         }
     }
 
+
+    /**
+     * 普通消息
+     * @param topic
+     * @param tagName
+     * @param msgContent
+     * @return
+     * @throws InterruptedException
+     * @throws RemotingException
+     * @throws MQClientException
+     */
+    public SendResult sendNormal(String topic, String tagName, String msgContent) throws InterruptedException, RemotingException, MQClientException {
+        try {
+            Message message = new Message(topic,tagName,msgContent.getBytes());
+            return producer.send(message);
+        } catch (MQBrokerException e) {
+            logger.error("producer send message error: [{}]", e);
+        }
+        return null;
+    }
+
     /**
      *
      * 顺序消息
@@ -92,8 +113,10 @@ public class Producer {
         return null;
     }
 
+
     /**
-     * 普通消息
+     *
+     *  保证消息可靠性
      * @param topic
      * @param tagName
      * @param msgContent
@@ -102,7 +125,7 @@ public class Producer {
      * @throws RemotingException
      * @throws MQClientException
      */
-    public SendResult sendNormal(String topic, String tagName, String msgContent) throws InterruptedException, RemotingException, MQClientException {
+    public SendResult sendSafe(String topic, String tagName, String msgContent) throws InterruptedException, RemotingException, MQClientException {
         try {
             Message message = new Message(topic,tagName,msgContent.getBytes());
             return producer.send(message);
@@ -111,6 +134,9 @@ public class Producer {
         }
         return null;
     }
+
+
+
 
 
 

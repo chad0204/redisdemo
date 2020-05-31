@@ -53,4 +53,19 @@ public class Controller {
         return "success";
 
     }
+
+    @RequestMapping("/send/safe")
+    public Object sendSafe() {
+        try {
+            for(int i=0; i< 100; i++) {
+                SendResult result = producer
+                        .sendSafe(MQConstants.SAFE_TOPIC,MQConstants.SAFE_TAG,i+"");
+//                System.out.println(result.getMessageQueue().getQueueId() + "===" + i);
+            }
+        } catch (InterruptedException | RemotingException | MQClientException e) {
+            e.printStackTrace();
+        }
+        return "success";
+
+    }
 }

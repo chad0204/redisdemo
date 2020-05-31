@@ -1,31 +1,28 @@
 package com.pc.rocketmqclient.consumer;
 
 import com.pc.rocketmqclient.model.MQConstants;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.*;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
-import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import java.util.List;
 
 /**
- * 1.集群模式下，同一个group下的消费者,一个queue只能被一个consumer消费，但是一个consumer可以消费多个queue。也就是4个q,超过4个consumer，多出来的consumer将不会收到消息。
- * 2.consumer负载均衡策略决定了queue的分配，但是广播模式下，没有负载均衡。
- * 3.一个jvm下，同一个group启动多个消费者需要给每个消费者加实例名称。
- * 4.广播==不同group的集群
- * 5.三种条件下，即使设置了从最后的offset消费，也会变成从0消费。
+ * 保证消息可靠传递
  *
  * @author pengchao
- * @date 10:51 2020-05-30
+ * @date 17:19 2020-05-31
  */
 @Component
-public class NormalConsumer implements InitializingBean {
+public class SafeConsumer implements InitializingBean {
     private static Logger logger = LoggerFactory.getLogger(NormalConsumer.class);
 
 
@@ -35,22 +32,15 @@ public class NormalConsumer implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        /**
-         * consumer不能比queue多，多出来的将不能分配到消息，一个queue只能被一个consumer消费，不管什么负载均衡策略，除非广播模式下。
-         */
-        logger.info("normal consumer init.");
-        startConsumer("normal_consumer_group_a");
-        startConsumer("normal_consumer_group_b");
-        startConsumer("normal_consumer_group_c");
-        startConsumer("normal_consumer_group_d");
-        startConsumer("normal_consumer_group_e");//这个consumer将分配不到消息
-        logger.info("normal consumer started.");
+        logger.info("safe consumer init.");
+        startConsumer("safe_consumer_group_a");
+        logger.info("safe consumer started.");
     }
 
 
     public void startConsumer(String consumerName) throws MQClientException {
 
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("normal_consumer_group");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("safe_consumer_group");
         String namesrvAddr = "localhost:9876";
         if (StringUtils.isEmpty(namesrvAddr)) {
             logger.error("namesrvAddr is empty.");
@@ -61,18 +51,18 @@ public class NormalConsumer implements InitializingBean {
         //如果是同个分组下有多个消费者，那么同一个jvm下需要给不同的消费者加实例名
         consumer.setInstanceName(consumerName);
 
-        consumer.subscribe(MQConstants.NORMAL_TOPIC, "*");
-//        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);//跳过历史消息
+        consumer.subscribe(MQConstants.SAFE_TOPIC, "*");
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
 
-        consumer.setMessageModel(MessageModel.BROADCASTING);//默认集群
-
-//        consumer.setAllocateMessageQueueStrategy(new AllocateMessageQueueAveragely());//负载均衡策略，广播模式下无效
 
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
                 MessageExt msg = msgs.get(0);
+
+//                int times = msg.getReconsumeTimes();
+//                System.out.println("重试次数："+times);
+
                 try {
                     String body = new String(msg.getBody());
 
@@ -96,3 +86,4 @@ public class NormalConsumer implements InitializingBean {
 
     }
 }
+

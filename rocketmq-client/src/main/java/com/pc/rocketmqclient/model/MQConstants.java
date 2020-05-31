@@ -15,6 +15,10 @@ public class MQConstants {
     public static String NORMAL_TAG_1 = "normal_TAG_1";
 
 
+    public static String SAFE_TOPIC = "safe_topic";
+    public static String SAFE_TAG= "tag_safe";
+
+
 
 
 }
