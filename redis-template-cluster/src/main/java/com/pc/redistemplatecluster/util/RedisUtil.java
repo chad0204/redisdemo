@@ -14,6 +14,7 @@ import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisCommands;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 
 /**
@@ -82,19 +83,6 @@ public class RedisUtil {
 
     //============================lock===============================
 
-
-    private static final String UNLOCK_LUA;
-
-    static {
-        StringBuilder sb = new StringBuilder();
-        sb.append("if redis.call(\"get\",KEYS[1]) == ARGV[1] ");
-        sb.append("then ");
-        sb.append("    return redis.call(\"del\",KEYS[1]) ");
-        sb.append("else ");
-        sb.append("    return 0 ");
-        sb.append("end ");
-        UNLOCK_LUA = sb.toString();
-    }
 
 
     /**
@@ -293,6 +281,21 @@ public class RedisUtil {
         return false;
     }
 
+
+
+    private static final String UNLOCK_LUA;
+
+    static {
+        StringBuilder sb = new StringBuilder();
+        sb.append("if redis.call(\"get\",KEYS[1]) == ARGV[1] ");
+        sb.append("then ");
+        sb.append("    return redis.call(\"del\",KEYS[1]) ");
+        sb.append("else ");
+        sb.append("    return 0 ");
+        sb.append("end ");
+        UNLOCK_LUA = sb.toString();
+    }
+
     public boolean releaseLock(String key,String requestId) {
         // 释放锁的时候，有可能因为持锁之后方法执行时间大于锁的有效期，此时有可能已经被另外一个线程持有锁，所以不能直接删除
         try {
@@ -348,6 +351,9 @@ public class RedisUtil {
      *
      *  限制一项资源同时能被多少进程访问
      *  信号量也是一种锁，只是锁未获取会阻塞，等待锁释放，而信号量未获取一般会直接退出，由用户处理失败
+     *
+     *
+     *  zset实现
      *
      * @param sem_name
      * @param limit

@@ -101,7 +101,11 @@ public class ZkClientApplicationTests {
      */
     @Test
     public void delNode() throws Exception {
-        client.delete().deletingChildrenIfNeeded().forPath("/loader");
+//        client.delete().deletingChildrenIfNeeded().forPath("/loader");
+        client.delete().deletingChildrenIfNeeded().forPath("/dubbo");
+
+
+
     }
 
 

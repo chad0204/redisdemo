@@ -7,9 +7,9 @@
         <artifactId>redisdemo</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>redis-jedis-cluster</artifactId>
+    <artifactId>rocketmq-client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>redis-jedis-cluster</name>
+    <name>rocketmq-client</name>
     <description>Demo project for Spring Boot</description>
     <packaging>jar</packaging>
 
@@ -19,9 +19,9 @@
 
     <dependencies>
         <dependency>
-        <groupId>redis.clients</groupId>
-        <artifactId>jedis</artifactId>
-        <version>3.2.0</version>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>4.4.0</version>
         </dependency>
     </dependencies>
 
