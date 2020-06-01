@@ -3,6 +3,7 @@ package com.pc.rocketmqclient.rest;
 import com.pc.rocketmqclient.model.MQConstants;
 import com.pc.rocketmqclient.model.Order;
 import com.pc.rocketmqclient.producer.Producer;
+import com.pc.rocketmqclient.producer.TransactionProducer;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.SendStatus;
@@ -22,6 +23,10 @@ public class Controller {
 
     @Autowired
     private Producer producer;
+
+
+    @Autowired
+    private TransactionProducer transactionProducer;
 
     @RequestMapping("/send/normal")
     public Object sendOrder() {
@@ -80,5 +85,14 @@ public class Controller {
         }
         return "success";
 
+    }
+
+
+    @RequestMapping("/send/transaction")
+    public Object sendTransaction() {
+        SendResult result = transactionProducer
+                .sendTransaction(MQConstants.TRANSACTION_TOPIC, MQConstants.TRANSACTION_TAG, "transactionMessage",0L);
+        System.out.println(result);
+        return result.getSendStatus();
     }
 }

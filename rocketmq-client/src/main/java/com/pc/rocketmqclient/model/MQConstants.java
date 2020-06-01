@@ -18,6 +18,9 @@ public class MQConstants {
     public static String SAFE_TOPIC = "safe_topic";
     public static String SAFE_TAG= "tag_safe";
 
+    public static String TRANSACTION_TOPIC = "transaction_topic";
+    public static String TRANSACTION_TAG = "transaction_tag";
+
 
 
 
