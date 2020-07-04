@@ -192,6 +192,7 @@ public class ZkClientTemplate {
 
 
     public boolean lock(String key) {
+        //加锁的方式是创建节点，创建失败则加锁成功，创建失败则加锁失败，putIfAbsent一样
         try {
             client.create()
                     .creatingParentsIfNeeded()

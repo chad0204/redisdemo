@@ -39,13 +39,16 @@ public class Producer {
 
         logger.info("producer init.");
         producer = new DefaultMQProducer("producer_group");
+
         String namesrvAddr = "localhost:9876";
         if (StringUtils.isEmpty(namesrvAddr)) {
             logger.error("namesrvAddr is empty.");
             return;
         }
+
         producer.setNamesrvAddr(namesrvAddr);
-        producer.setInstanceName("rocketmq-client");
+        //一个jvm下只有一个名称的实例
+        producer.setInstanceName("produce_instance_name");
 
         /**
          * 这里的失败是producer->broker的失败，如果返回状态不是send_ok,那么producer会在内部自己重试
@@ -64,6 +67,10 @@ public class Producer {
             logger.error("producer start error. {}", e);
         }
     }
+
+
+
+
     @PreDestroy
     public void destroy() {
         logger.info("producer destroy.");
@@ -86,6 +93,7 @@ public class Producer {
     public SendResult sendNormal(String topic, String tagName, String msgContent) throws InterruptedException, RemotingException, MQClientException {
         try {
             Message message = new Message(topic,tagName,msgContent.getBytes());
+
             return producer.send(message);
         } catch (MQBrokerException e) {
             logger.error("producer send message error: [{}]", e);
@@ -174,6 +182,29 @@ public class Producer {
         return null;
     }
 
+
+
+    public SendResult sendDelay(String topic, String tagName, String msgContent) {
+        try {
+            Message msg = new Message(topic, tagName, transferObjectToByte(msgContent));
+            msg.setDelayTimeLevel(3);//level3 是10s  level2 是5s
+            producer.send(msg);
+        } catch (Exception e) {
+            logger.error("producer send message error: [{}]", e);
+        }
+        return null;
+    }
+
+
+
+    public SendResult sendTest() throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
+
+
+        producer.send(new Message(),new MessageQueue());
+
+
+        return null;
+    }
 
 
 

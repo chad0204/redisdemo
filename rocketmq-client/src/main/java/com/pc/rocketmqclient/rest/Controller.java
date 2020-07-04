@@ -30,15 +30,16 @@ public class Controller {
 
     @RequestMapping("/send/normal")
     public Object sendOrder() {
-        Order.getOrderList().forEach(order -> {
+        for(int i=0;i<10;i++) {
             try {
                 SendResult result = producer
-                        .sendNormal(MQConstants.NORMAL_TOPIC,MQConstants.NORMAL_TOPIC,order.toString());
+                        .sendNormal(MQConstants.NORMAL_TOPIC,MQConstants.NORMAL_TOPIC,"msg"+i);
 //                System.out.println(result.getMessageQueue().getQueueId() + "===" + order.getOrderId());
             } catch (InterruptedException | RemotingException | MQClientException e) {
                 e.printStackTrace();
             }
-        });
+        }
+
         return "success";
 
     }
@@ -94,5 +95,13 @@ public class Controller {
                 .sendTransaction(MQConstants.TRANSACTION_TOPIC, MQConstants.TRANSACTION_TAG, "transactionMessage",0L);
         System.out.println(result);
         return result.getSendStatus();
+    }
+
+
+    @RequestMapping("/send/delay")
+    public Object sendDelay() {
+        SendResult result = producer
+                .sendDelay(MQConstants.DELAY_TOPIC, MQConstants.DELAY_TAG, "delayMessage");
+        return "success";
     }
 }

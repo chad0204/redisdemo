@@ -32,6 +32,7 @@
         <module>kafka-client</module>
         <module>cache-loader</module>
         <module>rocketmq-client</module>
+        <module>logistics</module>
     </modules>
 
     <dependencies>

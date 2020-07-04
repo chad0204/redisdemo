@@ -1,4 +1,4 @@
-package com.pc.redistemplatecluster.util;
+package com.pc.logistics.util;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,6 @@ import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisCommands;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
 
 
 /**
@@ -43,7 +42,7 @@ public class RedisUtil {
     private StringRedisTemplate redisTemplate;//这里注入的其实是springboot提供的StringRedisTemplate
 
 
-    private static int shardSize = 200;
+    private static int shardSize = 8;
 
 
 
@@ -63,7 +62,7 @@ public class RedisUtil {
     }
 
 
-    public boolean shardHset(String key, String field, String value) {
+    public boolean shardHset(String key, String field, Object value) {
         boolean result = true;
 
         try {
@@ -79,6 +78,38 @@ public class RedisUtil {
         return result;
     }
 
+
+
+    public Map<Object, Object>  shardHgetAll(String key,int shardSize) {
+        Map<Object, Object>  result = null;
+        try {
+            StringBuilder keySb = new StringBuilder(key);
+            keySb.append(":").append(shardSize);
+            result = this.hgetAll(keySb.toString());
+        } catch (Exception var6) {
+            log.error("shard hash getAll fail, error:", var6);
+        }
+        return result;
+    }
+
+
+    public Map<Object, Object>  shardHdel(String key,String field,int shardSize) {
+        Map<Object, Object>  result = null;
+        try {
+            StringBuilder keySb = new StringBuilder(key);
+            keySb.append(":").append(shardSize);
+            this.hdel(keySb.toString(),field);
+        } catch (Exception var6) {
+            log.error("shard hash del fail, error:", var6);
+        }
+        return result;
+    }
+
+//    public String test() {
+//        redisTemplate.opsForHash().multiGet()
+//
+//        return null;
+//    }
 
 
     //============================lock===============================
@@ -565,7 +596,9 @@ public class RedisUtil {
      *            键
      * @return 对应的多个键值
      */
-    public Map<Object, Object> hmget(String key) {
+    public Map<Object, Object> hgetAll(String key) {
+
+        //redisTemplate.opsForHash().multiGet()
         return redisTemplate.opsForHash().entries(key);
     }
 

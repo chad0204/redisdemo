@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * 1.集群模式下，同一个group下的消费者,一个queue只能被一个consumer消费，但是一个consumer可以消费多个queue。也就是4个q,超过4个consumer，多出来的consumer将不会收到消息。
  * 2.consumer负载均衡策略决定了queue的分配，但是广播模式下，没有负载均衡。
- * 3.一个jvm下，同一个group启动多个消费者需要给每个消费者加实例名称。
+ * 3.一个jvm下，同一个group启动多个消费者需要给每个消费者加实例名称（生产者也是）。
  * 4.广播==不同group的集群
  * 5.三种条件下，即使设置了从最后的offset消费，也会变成从0消费。
  * 6.接收的都是List<MessageExt>，如果不是批量发送，那么get(0)即可
@@ -28,6 +28,8 @@ import java.util.List;
 @Component
 public class NormalConsumer implements InitializingBean {
     private static Logger logger = LoggerFactory.getLogger(NormalConsumer.class);
+
+    private static String GROUP_NAME = "normal_consumer_group";
 
 
     /**
@@ -51,7 +53,7 @@ public class NormalConsumer implements InitializingBean {
 
     public void startConsumer(String consumerName) throws MQClientException {
 
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("normal_consumer_group");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(GROUP_NAME);//不同groupName的消费者相当于广播
         String namesrvAddr = "localhost:9876";
         if (StringUtils.isEmpty(namesrvAddr)) {
             logger.error("namesrvAddr is empty.");
@@ -66,7 +68,7 @@ public class NormalConsumer implements InitializingBean {
 //        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);//跳过历史消息
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
 
-        consumer.setMessageModel(MessageModel.BROADCASTING);//默认集群
+//        consumer.setMessageModel(MessageModel.BROADCASTING);//默认集群
 
 //        consumer.setAllocateMessageQueueStrategy(new AllocateMessageQueueAveragely());//负载均衡策略，广播模式下无效
 
@@ -94,6 +96,11 @@ public class NormalConsumer implements InitializingBean {
         } catch (MQClientException e) {
             logger.error("consumer start error:[{}]", e);
         }
+
+
+        System.out.println();
+
+        consumer.fetchSubscribeMessageQueues(MQConstants.NORMAL_TOPIC);
 
 
     }

@@ -22,6 +22,10 @@ public class MQConstants {
     public static String TRANSACTION_TAG = "transaction_tag";
 
 
+    public static String DELAY_TOPIC = "delay_topic";
+    public static String DELAY_TAG = "delay_tag";
+
+
 
 
 }

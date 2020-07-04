@@ -1,5 +1,7 @@
 package com.pc.redistemplatesingle;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +9,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -135,8 +140,74 @@ public class RedisTemplateSingleApplicationTests {
         System.out.println("加锁");
 
 
+    }
 
 
+    @Test
+    public void testHash() throws InterruptedException {
+
+//        redisTemplate.opsForHash().put("shunfeng".getBytes(),"1001".getBytes(),"aa".getBytes());
+//        redisTemplate.opsForHash().put("shunfeng".getBytes(),"1002".getBytes(),"bb".getBytes());
+//        redisTemplate.opsForHash().put("shunfeng".getBytes(),"1002".getBytes(),"dd".getBytes());
+//        redisTemplate.opsForHash().put("shunfeng".getBytes(),"1004".getBytes(),"cc".getBytes());
+
+
+
+
+        byte[] bytes = redisTemplate.dump("shunfeng".getBytes());
+
+
+        redisTemplate.restore("mykey",bytes,1000,TimeUnit.SECONDS);
+
+
+
+        JSON.parseObject(new String(bytes), new TypeReference<Map<String, String>>() {});
+
+        System.out.println();
+
+
+
+    }
+
+
+    public  byte[] serialize(final Object object) {
+        ObjectOutputStream oos = null;
+        ByteArrayOutputStream baos = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            return baos.toByteArray();
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    public  Object unserialize(final byte[] bytes) {
+        ByteArrayInputStream bais = null;
+        try {
+            bais = new ByteArrayInputStream(bytes);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return ois.readObject();
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    public  Map<Object, Object> unserializehmbb2moo(final Map<byte[], byte[]> hash) {
+        Map<Object, Object> result = new HashMap<Object, Object>();
+        try {
+            Set<byte[]> keys = hash.keySet();
+            if (keys != null && keys.size() > 0) {
+                for (byte[] key : keys) {
+                    result.put(unserialize(key), unserialize(hash.get(key)));
+                }
+            }
+        } catch (Exception e) {
+        }
+        return result;
     }
 
 }

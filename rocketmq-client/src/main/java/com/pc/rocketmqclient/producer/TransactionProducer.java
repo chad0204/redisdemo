@@ -33,6 +33,7 @@ public class TransactionProducer {
         TransactionListener transactionListener = new TransactionListenerImpl();
         producer = new TransactionMQProducer("transaction_group");
 
+        //事务状态回查异步线程池
         ExecutorService executorService =
                 new ThreadPoolExecutor(2, 5, 100, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2000), r -> {
             Thread thread = new Thread(r);
@@ -50,7 +51,9 @@ public class TransactionProducer {
         producer.setNamesrvAddr(namesrvAddr);
         producer.setInstanceName("transactionRocketDemo");
 
+        //注册线程池
         producer.setExecutorService(executorService);
+        //注册回查监听
         producer.setTransactionListener(transactionListener);
         producer.start();
 
