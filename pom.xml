@@ -33,6 +33,7 @@
         <module>cache-loader</module>
         <module>rocketmq-client</module>
         <module>logistics</module>
+        <module>mybatis-demo</module>
     </modules>
 
     <dependencies>
@@ -51,6 +52,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
         </dependency>
 
     </dependencies>

@@ -36,7 +36,7 @@ public class Task {
     private static final String REDIS_DISTRIBUTION_LOCK = "redis_distribution_lock";
 
 
-    @Scheduled(cron = PUT_TIME)//每隔一分钟放一次商品，让商品的新增速度小于消费速度
+    @Scheduled(cron = PERIOD_TIME)//每隔一分钟放一次商品，让商品的新增速度小于消费速度
     public void putGoods() {
         redisUtil.incr("no_lock_goods",3);
         redisUtil.incr("lock_goods",3);
@@ -45,10 +45,10 @@ public class Task {
 
     @Scheduled(cron = "0/5 * * * * ?")
     public void check() {
-        Object data = redisUtil.get("no_lock_goods");
-        if(data!=null && Integer.valueOf(data.toString())<0) {
-            System.out.println(Thread.currentThread().getName()+" ********no lock error"+Integer.valueOf(data.toString()));
-        }
+//        Object data = redisUtil.get("no_lock_goods");
+//        if(data!=null && Integer.valueOf(data.toString())<0) {
+//            System.out.println(Thread.currentThread().getName()+" ********no lock error"+Integer.valueOf(data.toString()));
+//        }
         Object data1 = redisUtil.get("lock_goods");
         if(data1!=null && Integer.valueOf(data1.toString())<0) {
             System.out.println(Thread.currentThread().getName()+" ********lock error"+Integer.valueOf(data1.toString()));

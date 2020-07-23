@@ -75,7 +75,7 @@ public class NormalConsumer implements InitializingBean {
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
-                //不管是批量发送还是单个消息，都会转成list,所以这里get(0)即可
+                //不管是批量发送还是单个消息，都会转成list,demo都不是批量发送，所以这里get(0)即可
                 MessageExt msg = msgs.get(0);
                 try {
                     String body = new String(msg.getBody());

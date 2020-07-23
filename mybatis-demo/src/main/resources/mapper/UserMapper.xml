@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pc.mybatisdemo.mapper.UserMapper">
+
+    <resultMap id="userMap" type="com.pc.mybatisdemo.model.UserEntity">
+        <result column="id"  property="id"/>
+        <result column="user_name"  property="userName"/>
+    </resultMap>
+
+    <update id="updateById">
+
+    </update>
+
+
+    <select id="getUser" parameterType="com.pc.mybatisdemo.model.UserEntity" resultMap="userMap">
+         SELECT id,user_name
+         FROM t_user
+         WHERE 1=1
+         <if test="id!=null">
+             and id = #{id}
+         </if>
+        <if test="userName!=null">
+            and user_name = #{userName}
+        </if>
+    </select>
+
+</mapper>
