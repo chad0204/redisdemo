@@ -34,6 +34,8 @@
         <module>rocketmq-client</module>
         <module>logistics</module>
         <module>mybatis-demo</module>
+        <module>solr-client</module>
+        <module>elasticsearch-client</module>
     </modules>
 
     <dependencies>

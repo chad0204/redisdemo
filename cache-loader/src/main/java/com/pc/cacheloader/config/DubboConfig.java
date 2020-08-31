@@ -5,7 +5,7 @@ import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ConsumerConfig;
 import com.alibaba.dubbo.config.ProtocolConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
-import com.alibaba.dubbo.config.spring.context.annotation.DubboComponentScan;
+//import com.alibaba.dubbo.config.spring.context.annotation.DubboComponentScan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Slf4j
-@DubboComponentScan(basePackages = {"com.pc.cacheloader.providers"})
+//@DubboComponentScan(basePackages = {"com.pc.cacheloader.providers"})
 public class DubboConfig {
 
     @Autowired
