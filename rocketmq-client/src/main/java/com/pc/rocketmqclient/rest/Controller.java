@@ -1,5 +1,6 @@
 package com.pc.rocketmqclient.rest;
 
+import com.pc.rocketmqclient.dfire.model.SimpleMsg;
 import com.pc.rocketmqclient.model.MQConstants;
 import com.pc.rocketmqclient.model.Order;
 import com.pc.rocketmqclient.producer.Producer;
@@ -27,6 +28,17 @@ public class Controller {
 
     @Autowired
     private TransactionProducer transactionProducer;
+
+
+
+    @RequestMapping("/send/test")
+    public Object send(String tag,String msg) throws InterruptedException, MQClientException, RemotingException {
+        SendResult result = producer
+                .send("dfire_topic",tag,new SimpleMsg(msg));
+        return "success";
+
+    }
+
 
     @RequestMapping("/send/normal")
     public Object sendOrder() {

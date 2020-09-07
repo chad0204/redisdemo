@@ -88,7 +88,7 @@ public class ProducerForWork {
 
 
         } catch (MQBrokerException e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -110,7 +110,7 @@ public class ProducerForWork {
 
             return producer.send(message);
         } catch (MQBrokerException e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -139,7 +139,7 @@ public class ProducerForWork {
                 }
             },orderId);//这里的orderId就是select()方法的参数arg
         } catch (MQBrokerException e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -161,7 +161,7 @@ public class ProducerForWork {
             Message message = new Message(topic,tagName,msgContent.getBytes());
             return producer.send(message);
         } catch (MQBrokerException e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -191,7 +191,7 @@ public class ProducerForWork {
                 }
             });
         } catch (Exception e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -204,7 +204,7 @@ public class ProducerForWork {
             msg.setDelayTimeLevel(3);//level3 是10s  level2 是5s
             producer.send(msg);
         } catch (Exception e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }

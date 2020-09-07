@@ -1,5 +1,6 @@
 package com.pc.rocketmqclient.producer;
 
+import com.pc.rocketmqclient.dfire.message.client.util.HessianUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
@@ -80,6 +82,20 @@ public class Producer {
     }
 
 
+
+    public SendResult send(String topic, String tagName, Object msgContent) throws InterruptedException, RemotingException, MQClientException {
+        try {
+            Message message = packMsg(topic, null, tagName, msgContent);
+            return producer.send(message);
+        } catch (MQBrokerException e) {
+            logger.error("producer send dfiremessage error: [{}]", e);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     /**
      * 普通消息
      * @param topic
@@ -93,13 +109,13 @@ public class Producer {
     public SendResult sendNormal(String topic, String tagName, String msgContent) throws InterruptedException, RemotingException, MQClientException {
         try {
             Message message = new Message(topic,tagName,msgContent.getBytes());
-
             return producer.send(message);
         } catch (MQBrokerException e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
+
 
     /**
      *
@@ -125,7 +141,7 @@ public class Producer {
                 }
             },orderId);//这里的orderId就是select()方法的参数arg
         } catch (MQBrokerException e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -147,7 +163,7 @@ public class Producer {
             Message message = new Message(topic,tagName,msgContent.getBytes());
             return producer.send(message);
         } catch (MQBrokerException e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -177,7 +193,7 @@ public class Producer {
                 }
             });
         } catch (Exception e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -190,7 +206,7 @@ public class Producer {
             msg.setDelayTimeLevel(3);//level3 是10s  level2 是5s
             producer.send(msg);
         } catch (Exception e) {
-            logger.error("producer send message error: [{}]", e);
+            logger.error("producer send dfiremessage error: [{}]", e);
         }
         return null;
     }
@@ -204,6 +220,18 @@ public class Producer {
 
 
         return null;
+    }
+
+
+
+    protected Message packMsg(String topic, String key, String tag, Object msg, boolean... hessianSer) throws IOException {
+        byte[] body;
+        if (hessianSer.length > 0 && hessianSer[0]) {
+            body = msg.toString().getBytes();
+        } else {
+            body = HessianUtil.serialize(msg);
+        }
+        return new Message(topic, tag, key, body);
     }
 
 
