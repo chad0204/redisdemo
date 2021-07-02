@@ -15,7 +15,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <elastic.search.version>5.5.3</elastic.search.version>
+        <elastic.search.version>6.8.15</elastic.search.version>
         <curator.version>2.11.1</curator.version>
     </properties>
 
